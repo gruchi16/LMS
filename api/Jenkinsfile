@@ -5,7 +5,7 @@ pipeline {
          }
         }
     environment {
-    dockerhub=credentials('dockerhub')
+    dockerhub=credentials('dockerhubuser')
     }
     stages{
         stage('Docker Build') {
@@ -15,7 +15,7 @@ pipeline {
           }
         stage('Docker Login') {
             steps {
-                sh 'echo $dockerhub_PSW | docker login -u $dockerhub_USR --password-stdin'
+                sh 'echo $dockerhubuser_PSW | docker login -u $dockerhubuser_USR --password-stdin'
             }
           }
         stage('Docker Push') {
