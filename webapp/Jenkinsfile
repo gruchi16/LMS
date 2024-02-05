@@ -5,32 +5,34 @@ pipeline {
 	}
     }
     environment {
-    dockerhub=credentials('dockerhub')
+    DOCKERHUB_CREDENTIALS = credentials('dockerhubuser')
+     registry = "gruchi16/frontend-lms"
+        registryCredential = 'dockerhubuser'
     }
     stages{
         stage('Docker Build') {
             steps {
-                sh 'cd webapp && docker build -t muralialakuntla3/frontend .'
+                sh 'cd webapp && docker build -t gruchi16/frontend-lms .'
              }
           }
         stage('Docker Login') {
             steps {
-                sh 'echo $dockerhub_PSW | docker login -u $dockerhub_USR --password-stdin'
+                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
             }
           }
         stage('Docker Push') {
             steps {
-                sh 'docker push muralialakuntla3/frontend'
+                sh 'docker push gruchi16/frontend-lms'
             }
           }
         stage('Remove old images') {
             steps {
-                sh 'docker rmi -f muralialakuntla3/frontend'
+                sh 'docker rmi -f gruchi16/frontend-lms'
               }
           }
         stage('Docker run'){
             steps{
-                sh 'docker container run -dt --name web -p 80:80 muralialakuntla3/frontend'
+                sh 'docker container run -dt --name web -p 80:80 gruchi16/frontend-lms'
             }
          }
 	}
