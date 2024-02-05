@@ -5,7 +5,10 @@ pipeline {
          }
         }
     environment {
-    dockerhub=credentials('dockerhubuser')
+      DOCKERHUB_CREDENTIALS = credentials('dockerhubuser')
+      registry = "gruchi16/backend-lms"
+        registryCredential = 'dockerhubuser'
+        dockerImage = ''
     }
     stages{
         stage('Docker Build') {
@@ -13,11 +16,11 @@ pipeline {
                 sh 'cd api && docker build -t gruchi16/backend-lms .'
              }
           }
-        stage('Docker Login') {
+        stage('Logging into dockerhub account') {
             steps {
-                sh 'echo $dockerhubuser_PSW | docker login -u $dockerhubuser_USR --password-stdin'
+                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
             }
-          }
+        }
         stage('Docker Push') {
             steps {
                 sh 'docker push gruchi16/backend-lms'
