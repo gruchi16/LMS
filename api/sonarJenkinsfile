@@ -1,0 +1,57 @@
+pipeline {
+    agent {
+    node {
+        label 'docker'
+         }
+        }
+    environment {
+      DOCKERHUB_CREDENTIALS = credentials('dockerhubuser')
+      registry = "gruchi16/backend-lms"
+        registryCredential = 'dockerhubuser'
+        dockerImage = ''
+    }
+    stages{
+        
+         stage('CODE ANALYSIS-SONARQUBE') {
+        steps {
+          sh 'Sonar testing started'
+           sh 'cd webapp && sudo docker run  --rm -e SONAR_HOST_URL="http://http://65.0.97.198:9000" -e SONAR_LOGIN="sqp_e54760bfc988207ec69e5dd2e8c9fa007151e357"  -v ".:/usr/src" sonarsource/sonar-scanner-cli -Dsonar.projectKey=lms'
+           sh 'echo sonar analysis completed'
+         }
+       }
+
+        stage('Docker Build') {
+            steps {
+                sh 'cd api && docker build -t gruchi16/backend-lms .'
+             }
+          }
+        stage('Logging into dockerhub account') {
+            steps {
+                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+            }
+        }
+        stage('Docker Push') {
+            steps {
+                sh 'docker push gruchi16/backend-lms'
+		sh 'docker container run -dt --name api -p 3000:3000 gruchi16/backend-lms'
+            }
+          }
+        stage('Remove old docker images') {
+            steps {
+                sh 'docker rmi -f gruchi16/backend-lms'
+              }
+          }
+        stage('creating database container') {
+            steps {
+                sh 'docker container rm --force lmsdb'
+                sh 'docker run -d -p 5432:5432 --network lmsnetwork -e POSTGRES_PASSWORD=password --name lmsdb postgres'
+                }
+           }
+        stage('Running the docker container') {
+            steps {
+                sh 'docker container rm --force api'
+                sh 'docker run -d -p 3000:3000 --network lmsnetwork -e DATABASE_URL=postgresql://postgres:password@lmsdb:5432/postgres --name api -e PORT=3000 -e MODE=local gruchi16/backend-lms'
+                }
+              }
+        }
+  }
