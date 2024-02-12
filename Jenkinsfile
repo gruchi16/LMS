@@ -1,7 +1,14 @@
 pipeline {
-agent any
-stages {
-    
+    agent {
+    node {
+        label 'docker'
+         }
+        }
+    environment {
+    dockerhub=credentials('dockerhubuser')
+    }
+
+    stages{
     stage('CODE ANALYSIS-SONARQUBE') {
         steps {
            sh 'echo sonar analysis completed'
