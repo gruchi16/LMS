@@ -1,45 +1,13 @@
 pipeline {
 agent any
 stages {
-    stage('NOTIFICATION-EMAIL') {
-        steps {
-           sh 'echo pipeline started'
-      }
-    }
+    
     stage('CODE ANALYSIS-SONARQUBE') {
         steps {
            sh 'echo sonar analysis completed'
+            sh 'cd webapp && sudo docker run  --rm -e SONAR_HOST_URL="http://65.1.132.50:9000" -e SONAR_LOGIN="sqp_23db14aac1a6abdbb26d03f66c2a161eef6b52ea"  -v ".:/usr/src" sonarsource/sonar-scanner-cli -Dsonar.projectKey=lms'
       }
     }
-    stage('BUILD FOR ARTIFACTS') {
-        steps {
-           sh 'echo build completed'
-      }
-    }
-    stage('RELEASE ARTIFACTS-NEXUS') {
-        steps {
-           sh 'echo artifacts pushed to nexus repo'
-      }
-    }
-    stage('BUILD IMAGES-DOCKER') {
-        steps {
-           sh 'echo docker images build and pushed to docker hub'
-      }
-    }
-    stage('APPROVAL-SLACK/EMAIL') {
-        steps {
-           sh 'echo requsting approval to deployment'
-      }
-    }
-    stage('DEPLOYMENT-K8S') {
-        steps {
-           sh 'echo application deployment completed'
-      }
-    }
-    stage('REVERTING DEPLOYMENT') {
-        steps {
-           sh 'echo deployment revarted'
-      }
-    }
-  }
+
+}
 }
