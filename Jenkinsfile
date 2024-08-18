@@ -1,6 +1,10 @@
 pipeline {
     agent  any
-   
+     environment {
+    DOCKERHUB_CREDENTIALS = credentials('dockerhubuser')
+     registry = "gruchi16/frontend-lms"
+        registryCredential = 'dockerhubuser'
+    }
 
     stages{
     stage('CODE ANALYSIS-SONARQUBE') {
