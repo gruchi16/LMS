@@ -3,10 +3,10 @@ pipeline {
      
     
     stages{
-        stage('CODE ANALYSIS-SONARQUBE') {
+        stage('build Analysis') {
            steps {
-               sh 'echo sonar analysis completed'
-               sh 'cd webapp && sudo docker run  --rm -e SONAR_HOST_URL="http://13.234.20.151:9000" -e SONAR_LOGIN="sqp_01e706411e1c972011ccabc7124e833621b7f2a9"  -v ".:/usr/src" sonarsource/sonar-scanner-cli -Dsonar.projectKey=lms'
+               sh 'cd webapp && npm install && npm run build'
+              
              }
           }
     }
