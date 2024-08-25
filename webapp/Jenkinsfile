@@ -9,5 +9,13 @@ pipeline {
               
              }
           }
+    stage('Releasin Artifact in Nexus'){
+        echo "Rleasing"
+    def packageJSON = readJSON file: 'webapp/package.json'
+    def packageJSONVersion = packageJSON.version
+    echo "{packageJSONVersion}"
+    sh 'zip webapp/dist-${packageJSONVersion}.zip -r webapp/dist'
+   sh 'curl -v -u admin:password --upload-file webapp/dist-${packageJSONVersion}.zip http://65.2.30.94:8081/repository/lms/' 
+        }
     }
 }
