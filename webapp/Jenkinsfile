@@ -11,7 +11,12 @@ pipeline {
     }
     stages{
 	
-       
+       stage('CODE ANALYSIS-SONARQUBE') {
+           steps {
+               sh 'echo sonar analysis completed'
+               sh 'cd webapp && sudo docker run  --rm -e SONAR_HOST_URL="http://65.2.126.3:9000" -e SONAR_LOGIN="sqp_de58ffd776a8d8892c0bf2ae05419c52292c9439"  -v ".:/usr/src" sonarsource/sonar-scanner-cli -Dsonar.projectKey=lms'
+             }
+          }
         stage('Docker Build') {
             steps {
                 sh 'cd webapp && docker build -t gruchi16/frontend-lms .'
